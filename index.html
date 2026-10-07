@@ -68,7 +68,33 @@ body{
 .pring{display:inline-block;padding:4px;background:var(--ink);clip-path:var(--pxcircle);flex:none;line-height:0}
 .pring>span{display:block;padding:4px;background:var(--lav);clip-path:var(--pxcircle)}
 .pring .photo{clip-path:var(--pxcircle)}
+
+/* sticky section navigation */
+.topnav{position:sticky;top:0;z-index:6;margin:14px 0 22px;background:var(--screen);box-shadow:-3px 0 0 0 var(--ink),3px 0 0 0 var(--ink),0 -3px 0 0 var(--ink),0 3px 0 0 var(--ink)}
+.topnav ul{list-style:none;margin:0;padding:6px 8px;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.topnav ul::-webkit-scrollbar{display:none}
+.topnav a{display:block;white-space:nowrap;font-family:var(--font-pixel);font-size:14px;color:var(--ink);text-decoration:none;padding:7px 12px;text-transform:uppercase;letter-spacing:.04em}
+.topnav a:hover,.topnav a:focus-visible{background:var(--lav-soft);outline:none}
+.topnav a.on{background:var(--lav);color:var(--ink)}
+.topnav .spk{color:var(--pink);margin-right:4px}
+section[id$="Sec"]{scroll-margin-top:70px}
+.scrim{z-index:9}
+@media (max-width:560px){.topnav a{font-size:12.5px;padding:6px 10px;min-height:38px;display:flex;align-items:center}.topnav{margin:10px 0 16px}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* phones: compact profile header, bigger tap targets */
+@media (max-width:560px){
+  .dhead{grid-template-columns:auto minmax(0,1fr);gap:12px;padding:12px 14px 12px;position:relative;align-items:start}
+  .dhead .photo{width:60px;height:60px;font-size:20px}
+  .dhead .pring>span{padding:3px}
+  .dhead h3{font-size:22px;padding-right:0}
+  .dhead .rank{padding-right:150px;min-height:40px;display:flex;align-items:center;flex-wrap:wrap;gap:4px}
+  .dhead .meta{font-size:14px;line-height:1.35}
+  .dchans{gap:2px 14px;font-size:15px;margin-top:4px}
+  .dnav{position:absolute;top:10px;right:12px;gap:6px}
+  .dnav .btn{min-width:40px;min-height:40px;font-size:16px;padding:6px}
+  .dbody{padding:16px 16px 40px}
+}
 </style>
 
 <!-- LAYOUT: structure only, reads the theme variables. -->
@@ -356,6 +382,13 @@ footer{margin-top:30px;text-align:center;font-family:var(--font-pixel);font-size
 <body>
 <div class="wrap">
   <header class="px device" id="header"></header>
+  <nav class="topnav" id="topnav" aria-label="Sections"><ul>
+    <li><a href="#recSec">Recommendation</a></li>
+    <li><a href="#spellSec">The spell</a></li>
+    <li><a href="#listSec">Shortlist</a></li>
+    <li><a href="#cavSec">Caveats</a></li>
+    <li><a href="#longSec">Longlist</a></li>
+  </ul></nav>
   <section id="recSec" aria-labelledby="recT"></section>
   <section id="spellSec" aria-labelledby="spellT"></section>
   <section id="listSec" aria-labelledby="listT"></section>
@@ -1363,6 +1396,24 @@ $('#grid').addEventListener('click',e=>{ if(e.target.closest('a')) return; const
 $('#recSec').addEventListener('click',e=>{ const t=e.target.closest('.ptile'); if(t) openDrawer(t.dataset.name); });
 $('#recSec').addEventListener('keydown',e=>{ const t=e.target.closest('.ptile'); if(t && (e.key==='Enter'||e.key===' ')){ e.preventDefault(); openDrawer(t.dataset.name);} });
 $('#grid').addEventListener('keydown',e=>{ const c=e.target.closest('.card'); if(c && e.target===c && (e.key==='Enter'||e.key===' ')){ e.preventDefault(); openDrawer(c.dataset.name);} });
+})();
+
+/* highlight the tab for the section in view */
+(function(){
+  const links=[...document.querySelectorAll('#topnav a')];
+  const secs=links.map(a=>document.querySelector(a.getAttribute('href')));
+  let forced=-1;
+  links.forEach((a,i)=>a.addEventListener('click',()=>{forced=i;setTimeout(mark,0)}));
+  ['wheel','touchstart','keydown'].forEach(ev=>window.addEventListener(ev,()=>{forced=-1},{passive:true}));
+  function mark(){
+    const y=window.scrollY+120; let cur=-1;
+    secs.forEach((s,i)=>{ if(s && s.offsetTop<=y) cur=i; });
+    if(window.innerHeight+window.scrollY>=document.body.scrollHeight-4) cur=secs.length-1;
+    if(forced>=0) cur=forced;
+    links.forEach((a,i)=>{ const on=i===cur; a.classList.toggle('on',on); if(on){a.setAttribute('aria-current','true')}else{a.removeAttribute('aria-current')} });
+    const on=links[cur]; if(on){ const ul=on.parentNode.parentNode; const l=on.offsetLeft, r=l+on.offsetWidth; if(l<ul.scrollLeft||r>ul.scrollLeft+ul.clientWidth) ul.scrollLeft=l-20; }
+  }
+  window.addEventListener('scroll',mark,{passive:true}); window.addEventListener('resize',mark); mark();
 })();
 </script>
 </body>
