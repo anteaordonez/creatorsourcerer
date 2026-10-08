@@ -231,6 +231,7 @@ section{margin-top:34px}
 .hstat{display:flex;gap:12px;flex-wrap:wrap}
 .hstat div{min-width:112px;padding:10px 12px;text-align:center}
 .hstat b{display:block;font-family:var(--font-pixel);font-weight:400;font-size:30px;color:var(--ink);line-height:1.1}
+.hstat span{display:block;line-height:1.35}
 .hstat{position:relative;z-index:1}
 .hstat span{font-family:var(--font-pixel);font-size:13px;color:var(--lav-ink);text-transform:uppercase}
 .divider{display:flex;justify-content:center;gap:14px;margin:30px 0 -6px;opacity:.9}
@@ -397,6 +398,12 @@ html.dlock{overflow:hidden}
 a.chan::after{content:"";position:absolute;inset:-5px -4px}
 /* tablet: the stacked sparkle column only takes space, hide it like on phones */
 @media (max-width:1020px){.hdeco{display:none}}
+.idea .iwhy{display:none}
+@media (hover:none),(max-width:560px){
+  .idea{align-items:flex-start}
+  .idea .iname{display:flex;flex-direction:column}
+  .idea .iwhy{display:block;font-size:12.5px;color:var(--muted);margin-top:2px;line-height:1.3}
+}
 </style>
 </head>
 <body>
@@ -1266,7 +1273,7 @@ $('#header').innerHTML = `
       <div><div class="forline">${sprite('heart',12,{a:C.pink,b:C.pink})} ${esc(D.meta.runDate)}</div><h1>${esc(D.meta.title)}</h1><p>${esc(D.meta.tagline)}</p></div>
     </div>
     <div class="hdeco" aria-hidden="true"><span class="twinkle">${sprite('sparkle',18,{a:C.lav,b:C.pink})}</span>${sprite('moon',16,{a:C.mint})}<span class="twinkle" style="animation-delay:1s">${sprite('sparkle',13,{a:C.pink,b:C.gold})}</span></div>
-    <div class="hstat"><div class="px lav"><b>${considered}</b><span>considered</span></div><div class="px lav"><b>${passedScreen}</b><span>passed</span></div><div class="px mint"><b>${onBoard}</b><span>on the board</span></div></div>
+    <div class="hstat"><div class="px lav"><b>${considered}</b><span>considered</span></div><div class="px lav"><b>${passedScreen}</b><span>fit the profile</span></div><div class="px mint"><b>${onBoard}</b><span>on the board</span></div></div>
   </div>`;
 
 /* ---- recommendation ---- */
@@ -1400,7 +1407,7 @@ function openDrawer(name,focusId){
     <div class="dsec tagsec">${tagGroups(c.tags,gold)}</div>
     <div class="dsec">${considerBox(c)}</div>
     ${c.pastWorkShow===false?'':`<div class="dsec"><h4>Past brand work</h4>${c.pastWork.length?`<ul>${c.pastWork.map(f=>`<li>${esc(f)}</li>`).join('')}</ul>`:'<p>None yet.</p>'}${c.pastWorkNote?`<p style="font-size:14px;color:var(--muted)">${esc(c.pastWorkNote)}</p>`:''}</div>`}
-    <div class="dsec bcats"><h4>Brand categories that fit</h4><div class="chips">${(c.brandCategories||[]).map(t=>`<span class="chip cat">${esc(t)}</span>`).join('')}</div>${c.brands.length?`<div class="ideas"><span class="ideas-l">${sprite('bulb',18,{a:C.ink,b:C.gold,c:'#ffffff',d:C.lav})} Ideas</span><div class="ideas-row">${c.brands.map(b=>`<span class="idea" title="${esc(b.why||'')}"><span class="spk" aria-hidden="true">✦</span>${esc(b.name)}</span>`).join('')}</div></div>`:''}</div>
+    <div class="dsec bcats"><h4>Brand categories that fit</h4><div class="chips">${(c.brandCategories||[]).map(t=>`<span class="chip cat">${esc(t)}</span>`).join('')}</div>${c.brands.length?`<div class="ideas"><span class="ideas-l">${sprite('bulb',18,{a:C.ink,b:C.gold,c:'#ffffff',d:C.lav})} Ideas</span><div class="ideas-row">${c.brands.map(b=>`<span class="idea" title="${esc(b.why||'')}"><span class="spk" aria-hidden="true">✦</span><span class="iname">${esc(b.name)}${b.why?`<span class="iwhy">${esc(b.why)}</span>`:''}</span></span>`).join('')}</div></div>`:''}</div>
 `;
   $('#dBody').scrollTop=0;
   $('#drawer').classList.add('open'); $('#drawer').setAttribute('aria-hidden','false'); $('#scrim').classList.add('open');
